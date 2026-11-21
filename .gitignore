@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# marimo runtime cache (the __marimo__/session snapshots ARE tracked)
+.marimo/
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# local scratch
+_tmp*
+*.log
