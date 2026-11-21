@@ -67,8 +67,8 @@ __marimo__/session/         生成物：执行快照，供 molab 预览
 
 ```bash
 uv run drilleng.py                                  # 跑自测
-uvx marimo edit 02-rock-mechanics.py                # 编辑
-uvx marimo export session --sandbox 02-rock-mechanics.py     # 刷新 molab 预览快照
+uvx marimo edit NN-topic-slug.py                    # 编辑
+uvx marimo export session --sandbox NN-topic-slug.py         # 刷新 molab 预览快照
 uvx --with nbformat marimo export ipynb 02-rock-mechanics.py \
     -o 02-rock-mechanics.ipynb --sandbox --include-outputs   # 刷新 GitHub 可渲染副本
 ```
