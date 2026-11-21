@@ -26,14 +26,17 @@ Studying *Fundamentals of Drilling Engineering* (Mitchell & Miska, SPE, 2011) on
 | # | Topic | File | Interactive |
 |---|---|---|---|
 | 01 | 钻井系统（三大子系统、单位与两个"魔数"的来源） | [01-drilling-systems.md](01-drilling-systems.md) | — |
-| 02 | 岩石力学与泥浆密度窗口（三压力 → 安全密度窗口） | [02-rock-mechanics.py](02-rock-mechanics.py) | [run in browser](https://molab.marimo.io/github/cospeng/fundamentals-of-drilling-engineering/blob/main/02-rock-mechanics.py/wasm) |
+| 02 | 岩石力学与泥浆密度窗口（三压力 → 安全密度窗口） | [02-rock-mechanics.py](02-rock-mechanics.py) · [rendered notebook](02-rock-mechanics.ipynb) | [run in browser](https://molab.marimo.io/github/cospeng/fundamentals-of-drilling-engineering/blob/main/02-rock-mechanics.py/wasm) |
 
 ## Run it
 
 ```bash
-uv run drilleng.py                                 # physics self-test (8 checks)
-uvx marimo edit 02-rock-mechanics.py               # open the notebook locally
-uvx marimo export session --sandbox 02-rock-mechanics.py   # refresh the GitHub preview snapshot
+uv run drilleng.py                                        # physics self-test (8 checks)
+uvx marimo edit 02-rock-mechanics.py                      # open the notebook locally
+
+# refresh the generated artifacts (all three are committed)
+uvx marimo export session --sandbox 02-rock-mechanics.py                          # molab preview data
+uvx --with nbformat marimo export ipynb 02-rock-mechanics.py     -o 02-rock-mechanics.ipynb --sandbox --include-outputs                        # GitHub-renderable copy
 ```
 
 No virtualenv to create: every notebook declares its own dependencies inline (PEP 723) and
@@ -54,11 +57,14 @@ No virtualenv to create: every notebook declares its own dependencies inline (PE
 ```
 drilleng.py                 SI-first helper functions + self-test
 01-drilling-systems.md      descriptive chapter, no code
-02-rock-mechanics.py        marimo notebook (single source, PEP 723 deps)
+02-rock-mechanics.py        marimo notebook -- the single source (PEP 723 deps)
+02-rock-mechanics.ipynb     generated: lets GitHub render the notebook with outputs
 data/formation_layers.csv   cleaned example layer table (no well identifiers)
-figures/                    figures produced by the notebooks
-__marimo__/session/         rendered outputs, committed so GitHub can preview them
+figures/                    figures written by the notebooks
+__marimo__/session/         generated: execution snapshot used by molab previews
 AGENTS.md                   the rules this repo is built under
+
+Generated files are always rebuilt, never hand-edited.
 ```
 
 ## Licence

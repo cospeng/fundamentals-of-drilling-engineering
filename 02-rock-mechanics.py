@@ -406,7 +406,7 @@ def _(hi, i_worst, lo, pc, pf, plt, po, pp, sh_min_ani, to_gcc, width, zw):
     axd.legend(loc="upper right", fontsize=7.5, framealpha=0.9)
 
     fig.suptitle(
-        "Mud weight window - vertical well ($\sigma_H/\sigma_h$ = %.2f), %d depth samples, 0-%.0f m"
+        r"Mud weight window - vertical well ($\sigma_H/\sigma_h$ = %.2f), %d depth samples, 0-%.0f m"
         % (sh_min_ani.value, len(zw), zw[-1]),
         fontsize=10,
     )
