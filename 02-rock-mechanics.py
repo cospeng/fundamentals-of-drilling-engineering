@@ -27,9 +27,6 @@ def _(mo):
     4. 由 Kirsch 解与拉伸破坏得到**破裂压力** $P_f$
     5. 由 Kirsch 解与 Mohr-Coulomb 判据得到**坍塌压力** $P_c$
     6. 组合成**泥浆密度窗口**（安全密度上下限）
-
-    **数据声明**：`data/formation_layers.csv` 中的层序与参数为示例设计取值，**不是实测数据**，
-    不含任何井位信息。用于本仓库的算例演示。
     """)
     return
 
@@ -67,7 +64,6 @@ def _():
     n_layers = len(rows)
     total_depth = rows[-1]["base_m"]
     print(f"{n_layers} layers, 0 - {total_depth:.0f} m")
-
     return de, mo, n_layers, np, plt, rows, tops, total_depth
 
 
@@ -81,7 +77,7 @@ def _(mo):
 
     **网格必须包含地表 0 m**：上覆压力是自地表向下的累积积分，第一个点必须是 0。
     如果网格从 10 m 开始，积分器会把 10 m 当作新的零点，10 m 处 σ_v 变成 0，
-    整条应力曲线都会被拉偏（这是一个真实踩过的坑）。
+    整条应力曲线都会被拉偏。
     """)
     return
 
@@ -104,7 +100,6 @@ def _(n_layers, np, rows, tops, total_depth):
     poisson = layer_series("poisson")
     cohesion = layer_series("c_mpa") * 1e6  # Pa
     phi = layer_series("phi_deg")
-
     return biot, cohesion, phi, poisson, pp_coeff, rho_bulk, z
 
 
@@ -127,7 +122,6 @@ def _(mo, rows):
         ],
         selection=None,
     )
-
     return
 
 
@@ -160,7 +154,6 @@ def _(de, np, rho_bulk, z):
 
     po_gcc = to_gcc(po)
     print(f"Po at {z[-1]:.0f} m = {po[-1] / 1e6:.2f} MPa  (equivalent density {po_gcc[-1]:.3f} g/cc)")
-
     return po, to_gcc, zw
 
 
@@ -188,7 +181,6 @@ def _(de, np, pp_coeff, to_gcc, z):
 
     pp_gcc = to_gcc(pp)
     print(f"Pp at {z[-1]:.0f} m = {pp[-1] / 1e6:.2f} MPa  (equivalent density {pp_gcc[-1]:.3f} g/cc)")
-
     return (pp,)
 
 
@@ -218,7 +210,6 @@ def _(mo):
         start=1.00, stop=1.30, step=0.01, value=1.00, label="σH / σh 各向异性比"
     )
     sh_min_ani
-
     return (sh_min_ani,)
 
 
@@ -231,7 +222,6 @@ def _(biot, de, np, po, poisson, pp, sh_min_ani, to_gcc, z):
 
     sh_min_gcc = to_gcc(sh_min)
     print(f"sh_min at {z[-1]:.0f} m = {sh_min[-1] / 1e6:.2f} MPa ({sh_min_gcc[-1]:.3f} g/cc)")
-
     return sh_max, sh_min
 
 
@@ -265,7 +255,6 @@ def _(biot, de, np, po, poisson, pp, to_gcc, z):
 
     pf_gcc = to_gcc(pf)
     print(f"Pf at {z[-1]:.0f} m = {pf[-1] / 1e6:.2f} MPa ({pf_gcc[-1]:.3f} g/cc)")
-
     return (pf,)
 
 
@@ -309,7 +298,6 @@ def _(biot, cohesion, de, np, phi, pp, sh_max, sh_min, to_gcc, z):
 
     pc_gcc = to_gcc(pc)
     print(f"Pc at {z[-1]:.0f} m = {pc[-1] / 1e6:.2f} MPa ({pc_gcc[-1]:.3f} g/cc)")
-
     return (pc,)
 
 
@@ -342,7 +330,6 @@ def _(np, pc, pf, pp, to_gcc, zw):
           f"({lo[i_worst]:.3f} - {hi[i_worst]:.3f})")
     print(f"median window width: {np.median(width):.3f} g/cc")
     print(f"collapse controls the lower bound in {int(np.sum(to_gcc(pc) > to_gcc(pp)))} of {len(zw)} samples")
-
     return hi, i_worst, lo, width
 
 
@@ -350,8 +337,6 @@ def _(np, pc, pf, pp, to_gcc, zw):
 def _(mo):
     mo.md(r"""
     ## 7. 成品图：泥浆密度窗口
-
-    图注用英文（便于直接用于申请材料），正文用中文。
     """)
     return
 
@@ -413,7 +398,6 @@ def _(hi, i_worst, lo, pc, pf, plt, po, pp, sh_min_ani, to_gcc, width, zw):
     fig.tight_layout()
     fig.savefig("figures/mud-window.png", dpi=200, bbox_inches="tight")
     fig
-
     return
 
 
@@ -422,7 +406,7 @@ def _(mo):
     mo.md(r"""
     ## 8. 工程判断
 
-    四条可以直接写进汇报的结论（数字都由上面的代码算出，拖动滑块会变）：
+    四条结论（数字由上面的代码算出，拖动滑块会变）：
 
     1. **各向同性假设下，窗口下限完全由孔隙压力控制。** $\sigma_H/\sigma_h = 1.0$ 时，
        580 个深度采样点的 $P_c$ 全部低于 $P_p$——剪切破坏根本不控制下限。
@@ -432,9 +416,9 @@ def _(mo):
     2. **窗口最窄处跟着高压层走。** 默认参数下窗口宽度在 0.35–0.71 g/cc 之间，
        最窄处 0.347 g/cc 出现在 4450 m（茅口组—栖霞组，$k_p = 1.80$），
        最宽处在地表附近（$k_p = 1.00$）。原因是 $\sigma_h$ 虽然随 $P_p$ 一起抬高，
-       但增幅是 $P_p$ 的 $
-    u/(1-
-    u) pprox 0.41$ 倍，永远追不上 $P_p$ 本身，
+       但增幅只有 $P_p$ 的 $
+u/(1-
+u) pprox 0.41$ 倍，永远追不上 $P_p$ 本身，
        所以**异常高压必然压缩钻井窗口**。这就是"压力预测不准就是井漏"的定量解释。
 
     3. **把 $\sigma_H/\sigma_h$ 拉到 1.3，最窄点会从 4450 m 跳到 3590 m，
@@ -444,15 +428,10 @@ def _(mo):
 
     4. **模型最弱的一环是 $\sigma_h$ 的估计方法。** 单轴应变式只适用于未经受强烈
        构造运动的盆地；要真正落地，必须有漏失试验（LOT/XLOT）或声波+密度反演标定。
-       **这句话必须始终跟图一起出现**，否则这张图会被误读成"设计泥浆密度就是这些数"。
 
-    同时要说清楚它**不能**做什么：这张图不是施工设计依据，它是公开假设下的一套计算演示。
-
-    **还有一处必须交代的局限**：浅层（0–1450 m）给定的内聚力 $c = 18$ MPa 对疏松砂泥岩
-    明显偏高，按此参数算出的 $P_c$ 甚至为负——数学上意味着"不用泥浆也塌不了"，显然不符合
-    实际。这不是公式错误，而是**示例参数的局限**：本章的 $c$、$\phi$ 是搬来的设计取值，
-    没有经过任何岩心或测井标定。所以图中蓝线在浅部落到 0 左侧，应当被理解为
-    "这套参数在该井段不可信"，而不是"该井段很安全"。
+    **参数局限**：浅层（0–1450 m）的内聚力 $c = 18$ MPa 对疏松砂泥岩偏高，算出的 $P_c$
+    为负。图中蓝线在浅部落到 0 左侧，说明这套 $c$、$\phi$ 在该井段不可信，
+    而不是该井段安全。
 
     ## 9. 自校验
 
@@ -460,12 +439,11 @@ def _(mo):
 
     1. 由 $k_p$ 生成的孔隙压力，其当量密度必须精确等于 $k_p$（验证压力→当量密度整条管线）
     2. 常密度积分必须与闭式解 $
-    ho g z$ 一致（验证积分器）
+ho g z$ 一致（验证积分器）
     3. 各向同性基线下窗口宽度处处为正、且 $P_f \ge P_p$（验证物理单调性）
     4. ppg 换算自洽（验证现场单位转换层）
 
-    第 3 条只在基线下校验：把各向异性调到 1.3 本来就该破坏这个不等式，那是模型在
-    告诉你窗口消失了，而不是程序出错。
+    第 3 条只对各向同性基线成立：各向异性调到 1.3 时窗口本来就消失了。
     """)
     return
 
